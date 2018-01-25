@@ -24,6 +24,13 @@ func main() {
 
 	model.Init(ctx, *project, *instance)
 
+	defer func() {
+		log.Println("closing connections!")
+		if err := model.CloseConnections(ctx); err != nil {
+			log.Fatalf("Could not close connections table %s: %v", lib.TABLE_NAME, err)
+		}
+	}()
+
 	err := model.CreateIfNotExists(ctx)
 	if err != nil {
 		log.Fatalf("Could not create table %s: %v", lib.TABLE_NAME, err)
@@ -48,9 +55,4 @@ func main() {
 	if err = model.DeleteTable(ctx); err != nil {
 		log.Fatalf("Could not delete table %s: %v", lib.TABLE_NAME, err)
 	}
-
-	if err = model.CloseConnections(ctx); err != nil {
-		log.Fatalf("Could not close connections table %s: %v", lib.TABLE_NAME, err)
-	}
-
 }
