@@ -5,8 +5,11 @@ import (
 	"flag"
 	"log"
 
+	// "cloud.google.com/go/bigtable"
 	"github.com/maksharma/bigtable/lib"
 	"github.com/maksharma/bigtable/model"
+	"go.opencensus.io/exporter/stackdriver"
+	"go.opencensus.io/trace"
 )
 
 func main() {
@@ -22,16 +25,25 @@ func main() {
 
 	ctx := context.Background()
 
+	e, err := stackdriver.NewExporter(stackdriver.Options{ProjectID: *project})
+	if err != nil {
+		log.Fatalf("Could not create stackdriver exporter %v", err)
+	}
+	trace.RegisterExporter(trace.Exporter(e))
+	trace.SetDefaultSampler(trace.AlwaysSample())
+	ctx, _ = trace.StartSpan(ctx, "test")
 	model.Init(ctx, *project, *instance)
 
 	defer func() {
+		span := trace.FromContext(ctx)
+		span.End()
 		log.Println("closing connections!")
 		if err := model.CloseConnections(ctx); err != nil {
 			log.Fatalf("Could not close connections table %s: %v", lib.TABLE_NAME, err)
 		}
 	}()
 
-	err := model.CreateIfNotExists(ctx)
+	err = model.CreateIfNotExists(ctx)
 	if err != nil {
 		log.Fatalf("Could not create table %s: %v", lib.TABLE_NAME, err)
 	}

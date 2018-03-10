@@ -35,7 +35,6 @@ func Init(ctx context.Context, project, instance string) {
 }
 
 func TableExists(ctx context.Context) bool {
-
 	tables, err := adminClient.Tables(ctx)
 	if err != nil {
 		log.Fatalf("Could not fetch table list: %v", err)
