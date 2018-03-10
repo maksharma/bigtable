@@ -5,7 +5,6 @@ import (
 	"flag"
 	"log"
 
-	// "cloud.google.com/go/bigtable"
 	"github.com/maksharma/bigtable/lib"
 	"github.com/maksharma/bigtable/model"
 	"go.opencensus.io/exporter/stackdriver"
