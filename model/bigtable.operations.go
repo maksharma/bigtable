@@ -15,6 +15,7 @@ var (
 	greetings   = []string{"Hello World!", "Hello Cloud Bigtable!", "Hello golang!"}
 	adminClient *bigtable.AdminClient
 	client      *bigtable.Client
+	tbl         *bigtable.Table
 )
 
 //functions specific to 1 table only
@@ -101,8 +102,17 @@ func DisplayAll(ctx context.Context) error {
 	return nil
 }
 
+type RowRange struct {
+	start string
+	limit string
+}
+
+func SampleRowKeys(ctx context.Context) ([]string, error) {
+	return tbl.SampleRowKeys(context.Background())
+}
+
 func InsertAndDisplay(ctx context.Context, project, instance string) error {
-	tbl := client.Open(lib.TABLE_NAME)
+	tbl = client.Open(lib.TABLE_NAME)
 	muts := make([]*bigtable.Mutation, len(greetings))
 	rowKeys := make([]string, len(greetings))
 

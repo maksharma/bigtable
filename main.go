@@ -62,6 +62,12 @@ func main() {
 		log.Fatalf("Could not delete table %s: %v", lib.TABLE_NAME, err)
 	}
 
+	keys, err := model.SampleRowKeys(ctx)
+	if err != nil {
+		log.Fatalf("Err in SampleRowKeys: %v", err)
+	}
+	log.Println("SampleRowKeys res: ", keys)
+
 	log.Printf("Deleting the table")
 	if err = model.DeleteTable(ctx); err != nil {
 		log.Fatalf("Could not delete table %s: %v", lib.TABLE_NAME, err)
