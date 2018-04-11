@@ -29,7 +29,7 @@ func main() {
 		log.Fatalf("Could not create stackdriver exporter %v", err)
 	}
 	trace.RegisterExporter(trace.Exporter(e))
-	trace.SetDefaultSampler(trace.AlwaysSample())
+	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
 	ctx, _ = trace.StartSpan(ctx, "test")
 	model.Init(ctx, *project, *instance)
 
